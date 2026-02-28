@@ -1,0 +1,62 @@
+/* src/styles/global.css */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont,
+               'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 애니메이션 */
+@keyframes gridDrift {
+  from { transform: translate(0, 0); }
+  to { transform: translate(32px, 32px); }
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes softGlow {
+  0%, 100% { text-shadow: 0 2px 20px rgba(14, 165, 233, 0.25); }
+  50% { text-shadow: 0 2px 30px rgba(14, 165, 233, 0.45); }
+}
+
+@keyframes wirePulse {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+
+@keyframes targetGlow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.4)); }
+  50% { filter: drop-shadow(0 0 14px rgba(253, 230, 138, 0.6)); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}

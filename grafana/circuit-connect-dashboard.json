@@ -1,0 +1,465 @@
+{
+    "meta": {
+        "type": "db",
+        "canSave": true,
+        "canEdit": true,
+        "canAdmin": true,
+        "canStar": true,
+        "canDelete": true,
+        "slug": "circuit-connect-game-analytics",
+        "url": "/d/efedbgtmavuv4b/circuit-connect-game-analytics",
+        "expires": "0001-01-01T00:00:00Z",
+        "created": "2026-02-26T03:38:26Z",
+        "updated": "2026-02-26T06:29:46Z",
+        "updatedBy": "admin",
+        "createdBy": "admin",
+        "version": 8,
+        "hasAcl": false,
+        "isFolder": false,
+        "folderId": 0,
+        "folderUid": "",
+        "folderTitle": "General",
+        "folderUrl": "",
+        "provisioned": false,
+        "provisionedExternalId": "",
+        "annotationsPermissions": {
+            "dashboard": {
+                "canAdd": true,
+                "canEdit": true,
+                "canDelete": true
+            },
+            "organization": {
+                "canAdd": true,
+                "canEdit": true,
+                "canDelete": true
+            }
+        }
+    },
+    "dashboard": {
+        "id": 2,
+        "panels": [
+            {
+                "datasource": {
+                    "uid": "ffedbair9vbb4b"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "#E2E8F0",
+                            "mode": "fixed"
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 0,
+                    "y": 0
+                },
+                "id": 1,
+                "options": {
+                    "colorMode": "value",
+                    "graphMode": "none",
+                    "textMode": "value"
+                },
+                "targets": [
+                    {
+                        "format": 1,
+                        "queryType": "sql",
+                        "rawSql": "SELECT count() as total FROM circuit_connect.game_events"
+                    }
+                ],
+                "title": "Total Events",
+                "type": "stat"
+            },
+            {
+                "datasource": {
+                    "uid": "ffedbair9vbb4b"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "#E2E8F0",
+                            "mode": "fixed"
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 6,
+                    "y": 0
+                },
+                "id": 2,
+                "options": {
+                    "colorMode": "value",
+                    "graphMode": "none",
+                    "textMode": "value"
+                },
+                "targets": [
+                    {
+                        "format": 1,
+                        "queryType": "sql",
+                        "rawSql": "SELECT uniq(user_key) as active_users FROM circuit_connect.game_events WHERE timestamp >= now() - INTERVAL 24 HOUR"
+                    }
+                ],
+                "title": "Active Users (24h)",
+                "type": "stat"
+            },
+            {
+                "datasource": {
+                    "uid": "ffedbair9vbb4b"
+                },
+                "description": "game_start \u2192 time_attack_end",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "mode": "thresholds"
+                        },
+                        "decimals": 1,
+                        "max": 1,
+                        "min": 0,
+                        "thresholds": {
+                            "steps": [
+                                {
+                                    "color": "#EF4444",
+                                    "value": null
+                                },
+                                {
+                                    "color": "#F59E0B",
+                                    "value": 0.3
+                                },
+                                {
+                                    "color": "#10B981",
+                                    "value": 0.6
+                                }
+                            ]
+                        },
+                        "unit": "percentunit"
+                    }
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 6,
+                    "x": 12,
+                    "y": 0
+                },
+                "id": 3,
+                "options": {
+                    "colorMode": "value",
+                    "graphMode": "none",
+                    "textMode": "value"
+                },
+                "targets": [
+                    {
+                        "format": 1,
+                        "queryType": "sql",
+                        "rawSql": "SELECT countIf(event_type = 'time_attack_end') / greatest(countIf(event_type = 'game_start'), 1) as rate FROM circuit_connect.game_events"
+                    }
+                ],
+                "title": "Completion Rate",
+                "type": "stat"
+            },
+            {
+                "datasource": {
+                    "uid": "ffedbair9vbb4b"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "#34D399",
+                            "mode": "fixed"
+                        },
+                        "unit": "ms"
+                    }
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 3,
+                    "x": 18,
+                    "y": 0
+                },
+                "id": 4,
+                "options": {
+                    "colorMode": "value",
+                    "graphMode": "none",
+                    "textMode": "value"
+                },
+                "targets": [
+                    {
+                        "format": 1,
+                        "queryType": "sql",
+                        "rawSql": "SELECT avg(toFloat64OrZero(JSONExtractString(payload, 'clear_time_ms'))) as avg_ms FROM circuit_connect.game_events WHERE event_type = 'stage_clear' AND JSONExtractString(payload, 'clear_time_ms') != ''"
+                    }
+                ],
+                "title": "\u23f1 Time Attack Avg",
+                "type": "stat"
+            },
+            {
+                "datasource": {
+                    "uid": "ffedbair9vbb4b"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "#FBBF24",
+                            "mode": "fixed"
+                        },
+                        "unit": "ms"
+                    }
+                },
+                "gridPos": {
+                    "h": 4,
+                    "w": 3,
+                    "x": 21,
+                    "y": 0
+                },
+                "id": 10,
+                "options": {
+                    "colorMode": "value",
+                    "graphMode": "none",
+                    "textMode": "value"
+                },
+                "targets": [
+                    {
+                        "format": 1,
+                        "queryType": "sql",
+                        "rawSql": "SELECT avg(toFloat64OrZero(JSONExtractString(payload, 'clear_time_ms'))) as avg_ms FROM circuit_connect.game_events WHERE event_type = 'story_stage_clear' AND JSONExtractString(payload, 'clear_time_ms') != ''"
+                    }
+                ],
+                "title": "\ud83d\udcd6 Story Avg",
+                "type": "stat"
+            },
+            {
+                "datasource": {
+                    "uid": "ffedbair9vbb4b"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "#818CF8",
+                            "mode": "fixed"
+                        },
+                        "custom": {
+                            "fillOpacity": 12,
+                            "gradientMode": "opacity",
+                            "lineWidth": 2,
+                            "showPoints": "never"
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 24,
+                    "x": 0,
+                    "y": 4
+                },
+                "id": 5,
+                "options": {
+                    "legend": {
+                        "displayMode": "hidden"
+                    }
+                },
+                "targets": [
+                    {
+                        "format": 1,
+                        "queryType": "sql",
+                        "rawSql": "SELECT toStartOfHour(timestamp) as time, count() as events FROM circuit_connect.game_events WHERE $__timeFilter(timestamp) GROUP BY time ORDER BY time"
+                    }
+                ],
+                "title": "Events Over Time",
+                "type": "timeseries"
+            },
+            {
+                "datasource": {
+                    "uid": "ffedbair9vbb4b"
+                },
+                "description": "\uc5d0\uba54\ub784\ub4dc=\ud0c0\uc784\uc5b4\ud0dd, \uc570\ubc84=\uc2a4\ud1a0\ub9ac",
+                "fieldConfig": {
+                    "defaults": {
+                        "unit": "ms"
+                    },
+                    "overrides": [
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "time_attack"
+                            },
+                            "properties": [
+                                {
+                                    "id": "color",
+                                    "value": {
+                                        "fixedColor": "#34D399",
+                                        "mode": "fixed"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "matcher": {
+                                "id": "byName",
+                                "options": "story"
+                            },
+                            "properties": [
+                                {
+                                    "id": "color",
+                                    "value": {
+                                        "fixedColor": "#FBBF24",
+                                        "mode": "fixed"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 12
+                },
+                "id": 6,
+                "options": {
+                    "legend": {
+                        "displayMode": "list",
+                        "placement": "bottom"
+                    },
+                    "orientation": "vertical"
+                },
+                "targets": [
+                    {
+                        "format": 1,
+                        "queryType": "sql",
+                        "rawSql": "SELECT grid_size, round(avgIf(clear_ms, mode = 'time_attack')) as time_attack, round(avgIf(clear_ms, mode = 'story')) as story FROM (SELECT JSONExtractString(payload, 'grid_size') as grid_size, toFloat64OrZero(JSONExtractString(payload, 'clear_time_ms')) as clear_ms, CASE WHEN event_type = 'stage_clear' THEN 'time_attack' WHEN event_type = 'story_stage_clear' THEN 'story' END as mode FROM circuit_connect.game_events WHERE event_type IN ('stage_clear', 'story_stage_clear') AND JSONExtractString(payload, 'grid_size') != '' AND JSONExtractString(payload, 'clear_time_ms') != '') GROUP BY grid_size ORDER BY grid_size"
+                    }
+                ],
+                "title": "Avg Clear Time by Grid",
+                "type": "barchart"
+            },
+            {
+                "datasource": {
+                    "uid": "ffedbair9vbb4b"
+                },
+                "description": "\uae09\uac10 \uc9c0\uc810 = \uc774\ud0c8 \ud3ec\uc778\ud2b8",
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "#818CF8",
+                            "mode": "fixed"
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 12
+                },
+                "id": 7,
+                "options": {
+                    "legend": {
+                        "displayMode": "hidden"
+                    },
+                    "orientation": "vertical"
+                },
+                "targets": [
+                    {
+                        "format": 1,
+                        "queryType": "sql",
+                        "rawSql": "SELECT toString(toInt32OrZero(JSONExtractString(payload, 'stage_num'))) as stage, count() as clears FROM circuit_connect.game_events WHERE event_type IN ('stage_clear', 'story_stage_clear') AND JSONExtractString(payload, 'stage_num') != '' GROUP BY stage ORDER BY toInt32OrZero(stage)"
+                    }
+                ],
+                "title": "Stage Funnel",
+                "type": "barchart"
+            },
+            {
+                "datasource": {
+                    "uid": "ffedbair9vbb4b"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "#818CF8",
+                            "mode": "fixed"
+                        }
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 20
+                },
+                "id": 8,
+                "options": {
+                    "legend": {
+                        "displayMode": "hidden"
+                    },
+                    "orientation": "vertical"
+                },
+                "targets": [
+                    {
+                        "format": 1,
+                        "queryType": "sql",
+                        "rawSql": "SELECT concat(lpad(toString(toHour(toTimezone(timestamp, 'Asia/Seoul'))), 2, '0'), ':00') as hour_kst, count() as plays FROM circuit_connect.game_events WHERE event_type IN ('game_start', 'stage_start', 'stage_clear', 'story_stage_clear') GROUP BY toHour(toTimezone(timestamp, 'Asia/Seoul')) ORDER BY toHour(toTimezone(timestamp, 'Asia/Seoul'))"
+                    }
+                ],
+                "title": "Play Time Distribution (KST)",
+                "type": "barchart"
+            },
+            {
+                "datasource": {
+                    "uid": "ffedbair9vbb4b"
+                },
+                "fieldConfig": {
+                    "defaults": {
+                        "color": {
+                            "fixedColor": "#818CF8",
+                            "mode": "fixed"
+                        },
+                        "decimals": 0,
+                        "unit": "dtdurations"
+                    }
+                },
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 20
+                },
+                "id": 9,
+                "options": {
+                    "colorMode": "value",
+                    "graphMode": "none",
+                    "reduceOptions": {
+                        "calcs": [
+                            "lastNotNull"
+                        ]
+                    },
+                    "textMode": "value"
+                },
+                "targets": [
+                    {
+                        "format": 1,
+                        "queryType": "sql",
+                        "rawSql": "SELECT round(avg(duration_sec)) as avg_sec FROM (SELECT session_id, dateDiff('second', min(timestamp), max(timestamp)) as duration_sec FROM circuit_connect.game_events GROUP BY session_id HAVING duration_sec > 5 AND duration_sec < 10800)"
+                    }
+                ],
+                "title": "Avg Session Duration",
+                "type": "stat"
+            }
+        ],
+        "refresh": "30s",
+        "tags": [
+            "circuit-connect"
+        ],
+        "time": {
+            "from": "now-7d",
+            "to": "now"
+        },
+        "timezone": "Asia/Seoul",
+        "title": "Circuit Connect - Game Analytics",
+        "uid": "efedbgtmavuv4b",
+        "version": 8
+    }
+}

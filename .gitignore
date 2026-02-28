@@ -1,0 +1,46 @@
+# Environment & Secrets
+.env
+.env.*
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Java / Flink
+pipeline/flink/target/
+*.jar
+*.class
+
+# Docker
+docker-compose.override.yml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Internal docs (optional - uncomment if you want to exclude)
+# HANDOFF_*.md
+# PHASE_*.md
+
+# Build artifacts
+*.tar.gz
+*.zip

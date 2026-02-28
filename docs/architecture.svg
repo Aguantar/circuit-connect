@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 650" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <marker id="aG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#94a3b8"/></marker>
+    <marker id="aB" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#60a5fa"/></marker>
+    <marker id="aC" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#22d3ee"/></marker>
+    <marker id="aR" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f87171"/></marker>
+    <marker id="aGr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#4ade80"/></marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="650" rx="12" fill="#0f172a"/>
+
+  <!-- Title -->
+  <text x="480" y="32" text-anchor="middle" fill="#f1f5f9" font-size="17" font-weight="700">⚡ Circuit Connect — Data Pipeline Architecture</text>
+
+  <!-- ===== ROW 1: Client, Backend, CDC, Data Scale ===== -->
+  <rect x="40" y="52" width="170" height="58" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="125" y="74" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="600">🎮 Client</text>
+  <text x="125" y="92" text-anchor="middle" fill="#cbd5e1" font-size="9">React + TypeScript (Vite)</text>
+
+  <rect x="290" y="52" width="200" height="58" rx="8" fill="#1e293b" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="390" y="74" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="600">⚙️ FastAPI Backend</text>
+  <text x="390" y="92" text-anchor="middle" fill="#cbd5e1" font-size="9">aiokafka · v2 이벤트 정형화 (30컬럼)</text>
+
+  <rect x="570" y="52" width="200" height="58" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="670" y="74" text-anchor="middle" fill="#f87171" font-size="11" font-weight="600">🔁 CDC Pipeline</text>
+  <text x="670" y="92" text-anchor="middle" fill="#cbd5e1" font-size="9">PostgreSQL → Debezium 2.5 (WAL)</text>
+
+  <rect x="810" y="52" width="120" height="58" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="870" y="70" text-anchor="middle" fill="#94a3b8" font-size="8" font-weight="600">Data Scale</text>
+  <text x="870" y="84" text-anchor="middle" fill="#e2e8f0" font-size="9" font-weight="700">74K+ events</text>
+  <text x="870" y="97" text-anchor="middle" fill="#cbd5e1" font-size="8">52 users · 5 personas</text>
+
+  <!-- Client → Backend -->
+  <line x1="210" y1="81" x2="288" y2="81" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#aB)"/>
+  <text x="249" y="75" text-anchor="middle" fill="#94a3b8" font-size="7">v2 이벤트</text>
+
+  <!-- ===== ROW 2: Kafka ===== -->
+  <rect x="200" y="138" width="560" height="50" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="480" y="159" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="600">📨 Kafka 3-Broker Cluster</text>
+  <text x="380" y="177" text-anchor="middle" fill="#cbd5e1" font-size="9">game-events</text>
+  <text x="580" y="177" text-anchor="middle" fill="#cbd5e1" font-size="9">CDC topics</text>
+
+  <!-- Backend → Kafka -->
+  <line x1="390" y1="110" x2="390" y2="136" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#aG)"/>
+  <!-- CDC → Kafka -->
+  <line x1="670" y1="110" x2="580" y2="136" stroke="#f87171" stroke-width="1.5" marker-end="url(#aR)"/>
+
+  <!-- Consumer Group labels + arrows -->
+  <text x="240" y="207" text-anchor="middle" fill="#fbbf24" font-size="7" font-weight="600">group: clickhouse-*</text>
+  <text x="720" y="207" text-anchor="middle" fill="#22d3ee" font-size="7" font-weight="600">group: flink-*</text>
+  <path d="M340,188 L240,224" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#aG)"/>
+  <path d="M620,188 L720,224" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#aC)"/>
+
+  <!-- ===== ROW 3: ClickHouse (left) ===== -->
+  <rect x="30" y="226" width="440" height="200" rx="8" fill="#111827" stroke="#10b981" stroke-width="1.5"/>
+  <text x="250" y="248" text-anchor="middle" fill="#34d399" font-size="11" font-weight="600">💾 ClickHouse (Star Schema)</text>
+
+  <rect x="45" y="258" width="185" height="50" rx="5" fill="#1e293b" stroke="#047857" stroke-width="1"/>
+  <text x="138" y="276" text-anchor="middle" fill="#34d399" font-size="8.5" font-weight="600">game_events (MergeTree)</text>
+  <text x="138" y="289" text-anchor="middle" fill="#94a3b8" font-size="7">30컬럼 · PARTITION BY toYYYYMM</text>
+  <text x="138" y="301" text-anchor="middle" fill="#94a3b8" font-size="7">ORDER BY (event_type, user_key, ts)</text>
+
+  <rect x="245" y="258" width="100" height="35" rx="5" fill="#1e293b" stroke="#047857" stroke-width="1"/>
+  <text x="295" y="275" text-anchor="middle" fill="#34d399" font-size="8" font-weight="600">fact_sessions</text>
+  <text x="295" y="287" text-anchor="middle" fill="#94a3b8" font-size="7">Flink 세션 집계</text>
+
+  <rect x="358" y="258" width="100" height="35" rx="5" fill="#1e293b" stroke="#047857" stroke-width="1"/>
+  <text x="408" y="275" text-anchor="middle" fill="#34d399" font-size="8" font-weight="600">game_alerts</text>
+  <text x="408" y="287" text-anchor="middle" fill="#94a3b8" font-size="7">이상 탐지</text>
+
+  <rect x="45" y="320" width="140" height="30" rx="5" fill="#1e293b" stroke="#047857" stroke-width="1"/>
+  <text x="115" y="335" text-anchor="middle" fill="#34d399" font-size="7.5" font-weight="600">mv_daily_user_summary</text>
+  <text x="115" y="345" text-anchor="middle" fill="#94a3b8" font-size="6.5">SummingMergeTree</text>
+
+  <rect x="200" y="320" width="130" height="30" rx="5" fill="#1e293b" stroke="#047857" stroke-width="1"/>
+  <text x="265" y="335" text-anchor="middle" fill="#34d399" font-size="7.5" font-weight="600">mv_stage_difficulty</text>
+  <text x="265" y="345" text-anchor="middle" fill="#94a3b8" font-size="6.5">AggregatingMergeTree</text>
+
+  <rect x="45" y="362" width="285" height="28" rx="5" fill="#1e293b" stroke="#047857" stroke-width="1"/>
+  <text x="188" y="378" text-anchor="middle" fill="#34d399" font-size="7.5" font-weight="600">dim_users · dim_leaderboard (ReplacingMergeTree — CDC)</text>
+  <text x="188" y="388" text-anchor="middle" fill="#94a3b8" font-size="6.5">PostgreSQL → Debezium → Kafka → ClickHouse</text>
+
+  <!-- MV dotted arrows -->
+  <path d="M100,308 L100,318" stroke="#34d399" stroke-width="1" stroke-dasharray="2,2" marker-end="url(#aGr)"/>
+  <path d="M180,308 L240,318" stroke="#34d399" stroke-width="1" stroke-dasharray="2,2" marker-end="url(#aGr)"/>
+
+  <!-- ===== ROW 3: Flink (right) ===== -->
+  <rect x="500" y="226" width="430" height="200" rx="8" fill="#111827" stroke="#06b6d4" stroke-width="1.5"/>
+  <text x="715" y="248" text-anchor="middle" fill="#22d3ee" font-size="11" font-weight="600">🔄 Flink 1.18 Stream Processing (Java)</text>
+
+  <rect x="515" y="260" width="130" height="36" rx="5" fill="#1e293b" stroke="#0e7490" stroke-width="1"/>
+  <text x="580" y="277" text-anchor="middle" fill="#22d3ee" font-size="8.5" font-weight="600">DuplicateFilter</text>
+  <text x="580" y="290" text-anchor="middle" fill="#94a3b8" font-size="7">event_id Keyed State 중복 제거</text>
+
+  <rect x="665" y="260" width="130" height="36" rx="5" fill="#1e293b" stroke="#0e7490" stroke-width="1"/>
+  <text x="730" y="277" text-anchor="middle" fill="#22d3ee" font-size="8.5" font-weight="600">LatencyMonitor</text>
+  <text x="730" y="290" text-anchor="middle" fill="#94a3b8" font-size="7">서버-클라이언트 지연 감지</text>
+
+  <rect x="515" y="310" width="150" height="42" rx="5" fill="#1e293b" stroke="#0e7490" stroke-width="1"/>
+  <text x="590" y="327" text-anchor="middle" fill="#22d3ee" font-size="8.5" font-weight="600">SessionAggregator</text>
+  <text x="590" y="340" text-anchor="middle" fill="#94a3b8" font-size="7">5분 gap 세션 윈도우</text>
+  <text x="590" y="350" text-anchor="middle" fill="#67e8f9" font-size="7">→ fact_sessions</text>
+
+  <rect x="680" y="310" width="240" height="42" rx="5" fill="#1e293b" stroke="#0e7490" stroke-width="1"/>
+  <text x="800" y="327" text-anchor="middle" fill="#22d3ee" font-size="8.5" font-weight="600">AnomalyDetector (3 Rules)</text>
+  <text x="800" y="340" text-anchor="middle" fill="#94a3b8" font-size="7">IMPOSSIBLE_CLEAR · RAPID_FIRE · SCORE_OVERFLOW</text>
+  <text x="800" y="350" text-anchor="middle" fill="#67e8f9" font-size="7">→ game_alerts</text>
+
+  <rect x="515" y="366" width="160" height="26" rx="5" fill="#1e293b" stroke="#0e7490" stroke-width="1"/>
+  <text x="595" y="383" text-anchor="middle" fill="#22d3ee" font-size="7.5" font-weight="600">EXACTLY_ONCE Checkpoint + RocksDB</text>
+
+  <!-- Flink internal arrows -->
+  <line x1="645" y1="278" x2="663" y2="278" stroke="#22d3ee" stroke-width="1" marker-end="url(#aC)"/>
+  <path d="M580,296 L580,308" stroke="#22d3ee" stroke-width="1" marker-end="url(#aC)"/>
+  <path d="M730,296 L800,308" stroke="#22d3ee" stroke-width="1" marker-end="url(#aC)"/>
+
+  <!-- Flink outputs → ClickHouse (fact_sessions, game_alerts) -->
+  <path d="M515,331 L460,280 L345,280" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#aC)"/>
+  <path d="M680,331 L462,275 L458,275" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#aC)"/>
+
+  <!-- ===== ROW 4: Grafana ===== -->
+  <rect x="30" y="454" width="900" height="75" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="480" y="476" text-anchor="middle" fill="#4ade80" font-size="12" font-weight="600">📊 Grafana Dashboards — Python API Provisioning</text>
+
+  <rect x="55" y="488" width="410" height="32" rx="5" fill="#0f172a" stroke="#15803d" stroke-width="1"/>
+  <text x="260" y="504" text-anchor="middle" fill="#4ade80" font-size="9.5" font-weight="600">🖥️ Pipeline Operations</text>
+  <text x="260" y="515" text-anchor="middle" fill="#94a3b8" font-size="7">DAU · 처리량 · 이상 탐지 · Late Event · 지연 분포 · 필드 채움률</text>
+
+  <rect x="490" y="488" width="410" height="32" rx="5" fill="#0f172a" stroke="#15803d" stroke-width="1"/>
+  <text x="695" y="504" text-anchor="middle" fill="#4ade80" font-size="9.5" font-weight="600">🎮 Game Analytics</text>
+  <text x="695" y="515" text-anchor="middle" fill="#94a3b8" font-size="7">챕터별 클리어율 · D1/D3/D7 리텐션 · 퍼널 · TA 스코어보드</text>
+
+  <!-- ClickHouse → Grafana -->
+  <line x1="250" y1="426" x2="250" y2="452" stroke="#4ade80" stroke-width="1.5" marker-end="url(#aGr)"/>
+  <line x1="715" y1="426" x2="715" y2="452" stroke="#4ade80" stroke-width="1.5" marker-end="url(#aGr)"/>
+
+  <!-- ===== LEGEND ===== -->
+  <rect x="30" y="555" width="900" height="48" rx="8" fill="#111827" stroke="#334155" stroke-width="1"/>
+  <text x="50" y="576" fill="#94a3b8" font-size="9" font-weight="600">Tech Stack</text>
+  <circle cx="120" cy="572" r="4" fill="#3b82f6"/><text x="129" y="576" fill="#cbd5e1" font-size="8">React/TS</text>
+  <circle cx="195" cy="572" r="4" fill="#8b5cf6"/><text x="204" y="576" fill="#cbd5e1" font-size="8">FastAPI</text>
+  <circle cx="265" cy="572" r="4" fill="#f59e0b"/><text x="274" y="576" fill="#cbd5e1" font-size="8">Kafka</text>
+  <circle cx="325" cy="572" r="4" fill="#06b6d4"/><text x="334" y="576" fill="#cbd5e1" font-size="8">Flink</text>
+  <circle cx="385" cy="572" r="4" fill="#10b981"/><text x="394" y="576" fill="#cbd5e1" font-size="8">ClickHouse</text>
+  <circle cx="475" cy="572" r="4" fill="#ef4444"/><text x="484" y="576" fill="#cbd5e1" font-size="8">Debezium</text>
+  <circle cx="555" cy="572" r="4" fill="#22c55e"/><text x="564" y="576" fill="#cbd5e1" font-size="8">Grafana</text>
+  <text x="660" y="576" fill="#64748b" font-size="7">|</text>
+  <text x="680" y="576" fill="#94a3b8" font-size="8" font-weight="600">Infra</text>
+  <text x="715" y="576" fill="#cbd5e1" font-size="8">Mini PC (Intel N100, 16GB) · Docker · Caddy · Ubuntu 24.04 · 24/7</text>
+
+  <text x="480" y="595" text-anchor="middle" fill="#334155" font-size="7">© 이준서 — Data Engineering Portfolio</text>
+</svg>

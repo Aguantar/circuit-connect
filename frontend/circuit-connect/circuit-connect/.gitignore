@@ -1,0 +1,73 @@
+# ============================================
+# Circuit Connect — 통합 .gitignore
+# 프론트엔드 + 백엔드 + 파이프라인 + 인프라
+# ============================================
+
+# ── 환경변수 / 시크릿 (최우선) ──
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+
+# ── Node.js / 프론트엔드 ──
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# ── Python / 백엔드 ──
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+venv/
+.venv/
+env/
+*.whl
+
+# ── IDE / 에디터 ──
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Docker ──
+docker-compose.override.yml
+
+# ── Cloudflare Tunnel ──
+cloudflared/
+*.cloudflared/
+tunnel-credentials.json
+
+# ── 데이터 / 로그 ──
+*.log
+logs/
+*.db
+*.sqlite3
+data/
+kafka-data/
+clickhouse-data/
+grafana-data/
+postgresql-data/
+
+# ── 빌드 / 캐시 ──
+*.tsbuildinfo
+.eslintcache
+.cache/
+
+# ── 테스트 ──
+coverage/
+.nyc_output/
+
+# ── OS ──
+Desktop.inicircuit-connect-backend/.env
+.env
