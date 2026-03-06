@@ -42,12 +42,23 @@ export default function Leaderboard({ onBack, defaultTimeLimitSec = 180 }: Props
       minHeight: '100vh',
       background: activeBg,
       display: 'flex', flexDirection: 'column', alignItems: 'center',
-      fontFamily: "'SF Pro Display', -apple-system, sans-serif", padding: 20,
+      fontFamily: "'SF Pro Display', -apple-system, sans-serif", padding: '64px 20px 20px',
       transition: 'background 0.3s ease',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: 360, marginBottom: 20, alignItems: 'center' }}>
-        <button onClick={onBack} style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: 14, cursor: 'pointer' }}>← 돌아가기</button>
+        <button onClick={onBack} style={{ background: 'white', border: '2px solid #3B82F6', borderRadius: 10, width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 18, color: '#2563EB', fontWeight: 800, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>←</button>
         <div style={{ fontSize: 18, fontWeight: 700, color: '#0F172A' }}>🏆 랭킹</div>
+        <button onClick={async () => {
+          try {
+            const { openGameCenterLeaderboard } = await import('@apps-in-toss/web-framework');
+            await openGameCenterLeaderboard();
+          } catch (e) { console.warn('[Toss Leaderboard]', e); }
+        }} style={{
+          background: 'linear-gradient(135deg, #3182F6, #1A6AF6)',
+          border: 'none', borderRadius: 10, padding: '6px 12px',
+          fontSize: 12, fontWeight: 700, color: 'white', cursor: 'pointer',
+          boxShadow: '0 2px 8px rgba(49,130,246,0.3)',
+        }}>토스 랭킹</button>
         <div style={{ width: 60 }} />
       </div>
 

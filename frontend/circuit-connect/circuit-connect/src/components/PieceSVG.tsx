@@ -34,13 +34,13 @@ export default function PieceSVG({
   const chClear = theme?.wireClear ?? '#FCD34D';
 
   const wireColor = isUniversal
-    ? (powered ? '#A78BFA' : '#4C3D6E')
+    ? (powered ? '#E0D0FF' : '#9B7FD4')
     : powered
       ? (cleared ? chClear : chWire)
       : '#475869';
 
   const wireGlow = isUniversal
-    ? '#A78BFA'
+    ? '#E0D0FF'
     : cleared ? chClear : chWire;
 
   // 글로우 색상 (rgba)
@@ -113,7 +113,7 @@ export default function PieceSVG({
       {/* 보너스 */}
       {isBonus && !isSource && !isTarget && (
         <g>
-          <circle cx={cx} cy={cx} r="10"
+          <circle cx={cx} cy={cx} r="12"
             fill={powered ? '#34D399' : '#1F3D2E'}
             stroke={powered ? '#059669' : '#2D5A40'} strokeWidth="1.5"
             style={powered ? { filter: 'drop-shadow(0 0 6px rgba(52,211,153,0.5))' } : undefined}
@@ -126,13 +126,13 @@ export default function PieceSVG({
       {/* 만능블럭 */}
       {isUniversal && !isSource && !isTarget && (
         <g>
-          <circle cx={cx} cy={cx} r="10"
-            fill={powered ? '#8B5CF6' : '#2D2547'}
-            stroke={powered ? '#7C3AED' : '#4C3D6E'} strokeWidth="1.5"
-            style={powered ? { filter: 'drop-shadow(0 0 6px rgba(139,92,246,0.5))' } : undefined}
+          <circle cx={cx} cy={cx} r="12"
+            fill={powered ? '#C4B5FD' : '#7C6BAD'}
+            stroke={powered ? '#E0D0FF' : '#9B7FD4'} strokeWidth="2"
+            style={{ filter: powered ? 'drop-shadow(0 0 10px rgba(192,160,255,0.8)) drop-shadow(0 0 20px rgba(139,92,246,0.5))' : 'drop-shadow(0 0 6px rgba(139,92,246,0.3))', animation: 'universalPulse 1.5s ease-in-out infinite' }}
           />
           <text x={cx} y={cx + 1} textAnchor="middle" dominantBaseline="middle"
-            fontSize="14" fill={powered ? 'white' : '#7C6BAD'} fontWeight="bold">+</text>
+            fontSize="14" fill='white' fontWeight="bold" style={{ filter: 'drop-shadow(0 0 3px white)' }}>✦</text>
         </g>
       )}
 

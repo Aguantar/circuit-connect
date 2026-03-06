@@ -44,3 +44,4 @@ logs/
 # Build artifacts
 *.tar.gz
 *.zip
+*.ait

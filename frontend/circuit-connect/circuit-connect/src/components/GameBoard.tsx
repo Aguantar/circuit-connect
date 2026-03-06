@@ -189,7 +189,7 @@ export default function GameBoard({
   // 페이지 배경: 어두운 남색 → 클리어 시 챕터별 밝은 톤
   const pageBg = isLit
     ? `linear-gradient(180deg, ${theme.clearBgFrom} 0%, ${theme.clearBgTo} 30%, ${theme.clearBgFrom} 100%)`
-    : 'linear-gradient(160deg, #223344 0%, #2A3D52 30%, #304558 60%, #223344 100%)';
+    : 'linear-gradient(160deg, #0A0F1A 0%, #111827 30%, #1A2332 60%, #0A0F1A 100%)';
 
   // 그리드 컨테이너
   const gridBg = isLit ? 'rgba(255,255,255,0.9)' : '#1C2B3A';
@@ -275,7 +275,7 @@ export default function GameBoard({
       }}
     >
       {/* ── 상단 바 ── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: 400, marginBottom: 12, alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: 400, marginTop: 64, marginBottom: 12, alignItems: 'center' }}>
         <button onClick={(e) => {
           e.stopPropagation();
           if (!cleared && grid && powered) {
@@ -290,10 +290,10 @@ export default function GameBoard({
           }
           timer.reset(); onExit();
         }}
-          style={{ background: 'none', border: 'none', color: textSecondary, fontSize: 14, cursor: 'pointer', transition: 'color .5s' }}>
-          ← 나가기
+          style={{ background: 'white', border: '2px solid #3B82F6', borderRadius: 10, width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 18, color: '#2563EB', fontWeight: 800, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>←
+
         </button>
-        <div style={{ fontSize: 14, color: textPrimary, fontWeight: 700, transition: 'color .5s' }}>
+        <div style={{ fontSize: 16, color: textPrimary, fontWeight: 700, transition: 'color .5s', flex: 1, textAlign: 'center' }}>
           {stage.name}
         </div>
         <div style={{
@@ -324,7 +324,7 @@ export default function GameBoard({
         <span style={{ color: timerColor, fontWeight: 600 }}>⭐ {score}</span>
         <span style={{ opacity: 0.2 }}>|</span>
         <span
-          onClick={(e) => { e.stopPropagation(); if (!cleared) setShowShop(true); }}
+          onClick={(e) => { e.stopPropagation(); setShowShop(true); }}
           style={{
             color: '#A78BFA', fontWeight: 600, cursor: cleared ? 'default' : 'pointer',
             background: 'rgba(167,139,250,0.1)', padding: '2px 8px', borderRadius: 8,
@@ -516,7 +516,7 @@ export default function GameBoard({
 
       {/* ── 클리어 오버레이 ── */}
       {clearPhase >= 2 && (
-        <ClearOverlay taps={taps} finalMs={finalMs} onStageList={onStageList} onNextStage={onNextStage} />
+        <ClearOverlay finalMs={finalMs} onStageList={onStageList} onNextStage={onNextStage} />
       )}
 
       <style>{`

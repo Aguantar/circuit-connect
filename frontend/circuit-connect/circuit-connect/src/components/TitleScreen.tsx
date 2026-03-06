@@ -46,7 +46,7 @@ export default function TitleScreen({ universalNodes, score, onStoryMode, onTime
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(160deg, #223344 0%, #2A3D52 30%, #304558 60%, #223344 100%)',
+      background: 'linear-gradient(160deg, #0A0F1A 0%, #111827 30%, #1A2332 60%, #0A0F1A 100%)',
       display: 'flex', flexDirection: 'column', alignItems: 'center',
       fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
       position: 'relative', overflow: 'hidden', padding: '0 20px',
@@ -85,7 +85,7 @@ export default function TitleScreen({ universalNodes, score, onStoryMode, onTime
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         width: '100%', maxWidth: 360,
-        marginTop: 'max(env(safe-area-inset-top, 12px), 16px)',
+        marginTop: 72,
         position: 'relative', zIndex: 2,
         animation: 'fadeUp .5s ease-out both',
       }}>
@@ -288,15 +288,15 @@ export default function TitleScreen({ universalNodes, score, onStoryMode, onTime
             {bestTA ? (
               <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                 {([
-                  { t: 60 as const, bg: 'rgba(245,158,11,0.35)', dim: 'rgba(245,158,11,0.12)' },
-                  { t: 120 as const, bg: 'rgba(139,92,246,0.35)', dim: 'rgba(139,92,246,0.12)' },
-                  { t: 180 as const, bg: 'rgba(16,185,129,0.35)', dim: 'rgba(16,185,129,0.12)' },
+                  { t: 60 as const, bg: 'rgba(245,158,11,0.85)', dim: 'rgba(245,158,11,0.25)' },
+                  { t: 120 as const, bg: 'rgba(139,92,246,0.85)', dim: 'rgba(139,92,246,0.25)' },
+                  { t: 180 as const, bg: 'rgba(16,185,129,0.85)', dim: 'rgba(16,185,129,0.25)' },
                 ]).map(({ t, bg, dim }) => {
                   const b = displayStats.timeAttackBest[t];
                   return (
                     <div key={t} style={{
-                      fontSize: 10, fontWeight: 600,
-                      padding: '2px 7px', borderRadius: 6,
+                      fontSize: 11, fontWeight: 700,
+                      padding: '3px 9px', borderRadius: 8,
                       background: b ? bg : dim,
                       color: b ? 'white' : 'rgba(255,255,255,0.35)',
                     }}>

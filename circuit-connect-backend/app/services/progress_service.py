@@ -38,3 +38,38 @@ async def upsert_progress(
             user_key, stage_id, clear_time_ms, universal_used,
         )
     return dict(row)
+
+
+# ── user_stats: 전체 게임 상태 저장/로드 ──
+
+async def save_user_stats(user_key: str, stats: dict) -> dict:
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            """
+            INSERT INTO user_stats (user_key, stats, updated_at)
+            VALUES ($1, $2::jsonb, NOW())
+            ON CONFLICT (user_key) DO UPDATE SET
+                stats = $2::jsonb,
+                updated_at = NOW()
+            RETURNING user_key, stats, updated_at
+            """,
+            user_key, __import__('json').dumps(stats),
+        )
+    return dict(row)
+
+
+async def load_user_stats(user_key: str) -> dict | None:
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "SELECT user_key, stats, updated_at FROM user_stats WHERE user_key = $1",
+            user_key,
+        )
+    if not row:
+        return None
+    import json
+    result = dict(row)
+    if isinstance(result["stats"], str):
+        result["stats"] = json.loads(result["stats"])
+    return result

@@ -71,3 +71,5 @@ coverage/
 # ── OS ──
 Desktop.inicircuit-connect-backend/.env
 .env
+
+.granite

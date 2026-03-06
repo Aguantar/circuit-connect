@@ -16,6 +16,8 @@ interface EventResponse {
 }
 
 // 이벤트 큐: 배치 전송용
+// ── 유저 키 캐시 (토스 SDK or localStorage) ──
+let _cachedUserKey: string | null = null;
 let eventQueue: GameEvent[] = [];
 let flushTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -36,12 +38,43 @@ function generateUUID(): string {
   });
 }
 
-function getUserKey(): string {
+async function initUserKey(): Promise<string> {
+  // 이미 캐시된 경우 바로 반환
+  if (_cachedUserKey) return _cachedUserKey;
+
+  // 1) 토스 SDK 시도
+  try {
+    const { getUserKeyForGame } = await import('@apps-in-toss/web-framework');
+    const result = await getUserKeyForGame();
+    if (result && typeof result === 'object' && result.type === 'HASH') {
+      _cachedUserKey = result.hash;
+      localStorage.setItem("cc_user_key", _cachedUserKey);
+      console.log('[Auth] Toss getUserKeyForGame success');
+      return _cachedUserKey;
+    }
+  } catch (e) {
+    console.warn('[Auth] Toss SDK fallback to localStorage:', e);
+  }
+
+  // 2) localStorage 폴백 (개발환경 / 비토스 환경)
   let key = localStorage.getItem("cc_user_key");
   if (!key) {
     key = `user_${generateUUID().slice(0, 8)}`;
     localStorage.setItem("cc_user_key", key);
   }
+  _cachedUserKey = key;
+  return key;
+}
+
+function getUserKey(): string {
+  if (_cachedUserKey) return _cachedUserKey;
+  // initUserKey 호출 전 동기 폴백 (드물게 발생)
+  let key = localStorage.getItem("cc_user_key");
+  if (!key) {
+    key = `user_${generateUUID().slice(0, 8)}`;
+    localStorage.setItem("cc_user_key", key);
+  }
+  _cachedUserKey = key;
   return key;
 }
 
@@ -174,4 +207,4 @@ if (typeof window !== "undefined") {
   });
 }
 
-export { getUserKey, getSessionId };
+export { getUserKey, getSessionId, initUserKey };

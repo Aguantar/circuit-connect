@@ -39,11 +39,7 @@ app = FastAPI(
 # CORS - 프론트엔드 허용
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-    "http://localhost:5173",
-    "http://192.168.219.114:5173",
-    "https://circuit.calmee.store",
-],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

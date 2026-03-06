@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { formatTime } from '../utils/format';
 
 interface ClearOverlayProps {
-  taps: number;
   finalMs: number;
   onStageList: () => void;
   onNextStage: () => void;
@@ -24,7 +23,7 @@ function generateConfetti(count: number) {
   }));
 }
 
-export default function ClearOverlay({ taps, finalMs, onStageList, onNextStage }: ClearOverlayProps) {
+export default function ClearOverlay({ finalMs, onStageList, onNextStage }: ClearOverlayProps) {
   const [confetti] = useState(() => generateConfetti(40));
 
   return (
@@ -65,16 +64,16 @@ export default function ClearOverlay({ taps, finalMs, onStageList, onNextStage }
         STAGE CLEAR ⚡
       </div>
 
-      {/* 클리어 시간 */}
+      {/* 클리어 시간 + 점수 한 줄 */}
       <div style={{
-        fontSize: 36, fontWeight: 800, color: '#92400E',
-        fontVariantNumeric: 'tabular-nums', marginBottom: 4, letterSpacing: -1,
+        display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 8,
+        marginBottom: 16,
       }}>
-        {formatTime(finalMs)}
-      </div>
-
-      <div style={{ fontSize: 13, color: '#B45309', marginBottom: 20 }}>
-        {taps} taps · +100점
+        <span style={{
+          fontSize: 32, fontWeight: 800, color: '#92400E',
+          fontVariantNumeric: 'tabular-nums', letterSpacing: -1,
+        }}>{formatTime(finalMs)}</span>
+        <span style={{ fontSize: 15, fontWeight: 700, color: '#F59E0B' }}>+100점</span>
       </div>
 
       {/* 버튼 */}

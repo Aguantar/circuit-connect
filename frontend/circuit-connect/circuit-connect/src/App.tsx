@@ -1,7 +1,7 @@
 // src/App.tsx
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { registerUser, trackEvent, markSessionStart } from './api';
-import { recordStoryClear, recordTimeAttackEnd, loadStats, isTutorialDone } from './lib/stats';
+import { registerUser, trackEvent, markSessionStart, initUserKey } from './api';
+import { recordStoryClear, recordTimeAttackEnd, loadStats, isTutorialDone, loadStatsFromServer, saveScore, saveUniversalNodes } from './lib/stats';
 import type { Stage, GameScreen } from './types/game';
 import { getNextStage } from './game/stages';
 import { STAGES } from './game/stages';
@@ -37,16 +37,79 @@ export default function App() {
     setScreen(to);
   }, []);
 
+  // ── 토스 안드로이드 back 버튼 처리 ──
   useEffect(() => {
-    registerUser();
-    markSessionStart();
-    trackEvent("session_start", {
-      device_info: {
-        platform: /android/i.test(navigator.userAgent) ? "android" : /iphone|ipad/i.test(navigator.userAgent) ? "ios" : "web",
-        screen_width: window.innerWidth,
-        screen_height: window.innerHeight,
-      }
+    if (screen === 'title') return;
+
+    let unsubscription: (() => void) | null = null;
+
+    (async () => {
+      try {
+        const { graniteEvent } = await import('@apps-in-toss/web-framework');
+        unsubscription = graniteEvent.addEventListener('backEvent', {
+      onEvent: () => {
+        const from = screenRef.current;
+        switch (from) {
+          case 'stageSelect':
+            navigateTo('title');
+            break;
+          case 'game':
+            navigateTo('stageSelect');
+            break;
+          case 'timeAttackSelect':
+            navigateTo('title');
+            break;
+          case 'timeAttack':
+            navigateTo('title');
+            break;
+          case 'timeAttackResult':
+            navigateTo('title');
+            break;
+          case 'leaderboard':
+            navigateTo('title');
+            break;
+          default:
+            navigateTo('title');
+            break;
+        }
+      },
+      onError: (error) => {
+        console.error('backEvent error:', error);
+      },
     });
+
+    } catch (e) { console.warn('[backEvent] not in Toss:', e); }
+    })();
+
+    return () => {
+      unsubscription?.();
+    };
+  }, [screen, navigateTo]);
+
+  useEffect(() => {
+    (async () => {
+      await initUserKey();
+      // 토스 SDK 플랫폼 설정
+      try {
+        const { setIosSwipeGestureEnabled, setDeviceOrientation } = await import('@apps-in-toss/web-framework');
+        setIosSwipeGestureEnabled({ isEnabled: false });
+        setDeviceOrientation({ type: 'portrait' });
+      } catch (e) { console.warn('[SDK Config]', e); }
+      registerUser();
+      markSessionStart();
+      // 서버에서 진행도 로드
+      const serverStats = await loadStatsFromServer();
+      setScore(serverStats.score);
+      setUniversalNodes(serverStats.universalNodes);
+      statsLoadedRef.current = true;
+      trackEvent("session_start", {
+        device_info: {
+          platform: /android/i.test(navigator.userAgent) ? "android" : /iphone|ipad/i.test(navigator.userAgent) ? "ios" : "web",
+          screen_width: window.innerWidth,
+          screen_height: window.innerHeight,
+        }
+      });
+    })();
   }, []);
 
   const [currentStage, setCurrentStage] = useState<Stage | null>(() => {
@@ -55,11 +118,16 @@ export default function App() {
  })
   const [universalNodes, setUniversalNodes] = useState(5);
   const [score, setScore] = useState(0);
+  const statsLoadedRef = useRef(false);
   const [taResult, setTaResult] = useState<TimeAttackResult | null>(null);
   const [gameKey, setGameKey] = useState(0);
   const [taKey, setTaKey] = useState(0);
 
 const [taTimeLimit, setTaTimeLimit] = useState(180);
+
+  // score/universalNodes 변경 시 서버에 자동 저장 (초기 로드 후부터)
+  useEffect(() => { if (statsLoadedRef.current) saveScore(score); }, [score]);
+  useEffect(() => { if (statsLoadedRef.current) saveUniversalNodes(universalNodes); }, [universalNodes]);
 
 const handleStoryMode = useCallback(() => {
     navigateTo('stageSelect', { mode: 'story' });
@@ -143,6 +211,15 @@ const handleStoryMode = useCallback(() => {
      result.totalScore,
      result.stagesCleared
    );
+    setUniversalNodes(n => n - result.universalNodesUsed);
+    // 토스 게임센터 리더보드에 점수 제출
+    (async () => {
+      try {
+        const { submitGameCenterLeaderBoardScore } = await import('@apps-in-toss/web-framework');
+        const res = await submitGameCenterLeaderBoardScore({ score: String(result.totalScore) });
+        console.log('[Toss Leaderboard]', res?.statusCode);
+      } catch (e) { console.warn('[Toss Leaderboard] skip:', e); }
+    })();
     navigateTo('timeAttackResult', { mode: 'time_attack', time_limit_sec: result.timeLimitSec });
   }, [taTimeLimit, navigateTo]);
 
@@ -205,10 +282,10 @@ case 'timeAttackSelect': {
         <div style={{
           minHeight: '100vh',
           background: 'linear-gradient(180deg, #F0F9FF 0%, #E0F2FE 30%, #F8FAFC 100%)',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '64px', justifyContent: 'center',
           fontFamily: "'SF Pro Display', -apple-system, sans-serif", padding: '20px',
         }}>
-          <div style={{ fontSize: 18, fontWeight: 700, color: '#0F172A', marginBottom: 20 }}>⏱ 타임어택</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, alignSelf: 'flex-start', marginBottom: 20 }}><button onClick={handleExit} style={{ background: 'white', border: '2px solid #3B82F6', borderRadius: 10, width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 18, color: '#2563EB', fontWeight: 800, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>←</button><div style={{ fontSize: 20, fontWeight: 700, color: '#0F172A' }}>⏱ 타임어택</div></div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%', maxWidth: 320 }}>
             {modes.map(m => (
               <button key={m.sec} onClick={() => handleTimeSelect(m.sec)} style={{
@@ -233,9 +310,6 @@ case 'timeAttackSelect': {
               </button>
             ))}
           </div>
-          <button onClick={handleExit} style={{
-            marginTop: 16, background: 'none', border: 'none', color: '#94A3B8', fontSize: 14, cursor: 'pointer',
-          }}>← 돌아가기</button>
         </div>
       );
     }

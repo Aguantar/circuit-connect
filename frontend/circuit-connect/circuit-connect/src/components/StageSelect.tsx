@@ -42,15 +42,15 @@ export default function StageSelect({ onSelect, onBack }: StageSelectProps) {
     <div style={{
       minHeight: '100vh',
       background: 'linear-gradient(180deg, #F0F9FF 0%, #F8FAFC 100%)',
-      padding: '20px 16px',
+      padding: '64px 16px 20px',
       fontFamily: "'SF Pro Display', -apple-system, sans-serif",
     }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
         <button onClick={onBack} style={{
-          background: 'white', border: '1px solid #E2E8F0', borderRadius: 10,
+          background: 'white', border: '2px solid #3B82F6', borderRadius: 10,
           width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', fontSize: 16, color: '#64748B',
+          cursor: 'pointer', fontSize: 18, color: '#2563EB', fontWeight: 800,
           boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
         }}>←</button>
         <div>
@@ -96,7 +96,7 @@ export default function StageSelect({ onSelect, onBack }: StageSelectProps) {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 22,
                   }}>
-                    {allCleared ? '✅' : chapter.icon}
+                    {chapter.icon}
                   </div>
                   <div style={{ textAlign: 'left' }}>
                     <div style={{ fontSize: 11, fontWeight: 600, color: chapter.color, letterSpacing: 0.5 }}>
@@ -120,13 +120,13 @@ export default function StageSelect({ onSelect, onBack }: StageSelectProps) {
 
               {/* Stage List */}
               <div style={{
-                maxHeight: isOpen ? stages.length * 56 + 16 : 0,
+                maxHeight: isOpen ? 1000 : 0,
                 overflow: 'hidden',
                 transition: 'max-height .35s ease',
               }}>
                 <div style={{
                   padding: '0 12px 12px',
-                  display: 'flex', flexDirection: 'column', gap: 4,
+                  display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6,
                 }}>
                   {stages.map((stage, i) => {
                     const stageId = stage.id as number;
@@ -177,7 +177,7 @@ export default function StageSelect({ onSelect, onBack }: StageSelectProps) {
                           </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <DifficultyBar stage={stage} color={chapter.color} />
+                          
                           <span style={{ color: '#CBD5E1', fontSize: 16 }}>›</span>
                         </div>
                       </button>

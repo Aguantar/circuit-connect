@@ -38,7 +38,7 @@ export default function TimeAttackResultScreen({ result, onExit, onRetry, onLead
       minHeight: '100vh',
       background: 'linear-gradient(180deg, #FDF2F8 0%, #FCE7F3 30%, #FDF2F8 100%)',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      fontFamily: "'SF Pro Display', -apple-system, sans-serif", padding: 20,
+      fontFamily: "'SF Pro Display', -apple-system, sans-serif", padding: '64px 20px 20px',
     }}>
       {/* 결과 배너 */}
       <div style={{
@@ -51,12 +51,29 @@ export default function TimeAttackResultScreen({ result, onExit, onRetry, onLead
 
       {/* 메인 점수 */}
       <div style={{
-        fontSize: 56, fontWeight: 800, color: '#0F172A',
-        fontVariantNumeric: 'tabular-nums', marginBottom: 4,
+        fontSize: 64, fontWeight: 900, fontVariantNumeric: 'tabular-nums', marginBottom: 4,
+        background: 'linear-gradient(135deg, #EC4899, #8B5CF6, #3B82F6)',
+        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+        textShadow: 'none', letterSpacing: -2,
+        animation: 'scorePopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
       }}>
         {result.totalScore.toLocaleString()}
       </div>
-      <div style={{ fontSize: 14, color: '#94A3B8', marginBottom: 8 }}>랭킹 점수</div>
+      <style>{`
+        @keyframes scorePopIn {
+          0% { transform: scale(0.3); opacity: 0; }
+          50% { transform: scale(1.1); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+      `}</style>
+      <div style={{
+        fontSize: 13, fontWeight: 600, color: '#94A3B8', marginBottom: 8,
+        letterSpacing: 2, textTransform: 'uppercase',
+      }}>랭킹 점수</div>
 
       {/* 내 순위 */}
       {myRank !== null && (
@@ -103,7 +120,7 @@ export default function TimeAttackResultScreen({ result, onExit, onRetry, onLead
             padding: '14px 28px', background: 'linear-gradient(135deg, #EC4899, #BE185D)',
             border: 'none', borderRadius: 14, color: 'white', fontSize: 15, fontWeight: 600, cursor: 'pointer',
             boxShadow: '0 4px 16px rgba(236,72,153,0.25)',
-          }}>다시 도전 →</button>
+          }}>다시 도전</button>
         </div>
         <button onClick={onLeaderboard} style={{
           padding: '10px 24px', background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)',

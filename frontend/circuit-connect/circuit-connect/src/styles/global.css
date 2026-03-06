@@ -60,3 +60,8 @@ body {
   -webkit-user-select: none;
   touch-action: manipulation;
 }
+
+@keyframes universalPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}

@@ -305,16 +305,15 @@ const spawnPuzzle = useCallback((clearedCount: number) => {
       minHeight: '100vh',
       background: clearFlash ? modeBg.flash : modeBg.normal,
       display: 'flex', flexDirection: 'column', alignItems: 'center',
-      fontFamily: "'SF Pro Display', -apple-system, sans-serif", padding: 16,
+      fontFamily: "'SF Pro Display', -apple-system, sans-serif", padding: '64px 16px 16px',
       transition: 'background 0.4s ease',
     }}>
       {/* Top bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', maxWidth: 400, marginBottom: 12, alignItems: 'center' }}>
         <button onClick={() => setShowExitConfirm(true)}
-          style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: 14, cursor: 'pointer' }}>
-          ← 나가기
+          style={{ background: 'white', border: '2px solid #3B82F6', borderRadius: 10, width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 18, color: '#2563EB', fontWeight: 800, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>←
         </button>
-        <div style={{ fontSize: 14, color: '#0F172A', fontWeight: 700 }}>⏱ 타임어택</div>
+        <div style={{ fontSize: 18, color: '#0F172A', fontWeight: 700, flex: 1, textAlign: 'center' }}>⏱ 타임어택</div>
         <div style={{
           fontSize: 16, fontWeight: 800, fontVariantNumeric: 'tabular-nums',
           color: timerColor, background: timerBg,

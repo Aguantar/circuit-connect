@@ -5,6 +5,17 @@
 
 <br>
 
+## 🔗 라이브 데모
+
+| | URL |
+|---|---|
+| **🎮 게임 플레이** | [circuit.calmee.store](https://circuit.calmee.store) |
+| **📊 파이프라인 대시보드** | [grafana.calmee.store](https://grafana.calmee.store) |
+| **📱 원스토어** | 검색: "Circuit Connect" (전체이용가, 판매중) |
+| **📱 앱인토스** | 검수 대기 중 |
+
+<br>
+
 ## 📌 프로젝트 요약
 
 | 항목 | 내용 |
@@ -13,7 +24,7 @@
 | **게임** | 전선을 연결해 전구에 불을 켜는 논리 퍼즐 (스토리 5챕터 × 10스테이지 + 타임어택) |
 | **핵심 스택** | React · FastAPI · Kafka · Flink · ClickHouse · Grafana |
 | **인프라** | 미니PC 홈서버 24/7 운영 (Intel N100, 16GB RAM, Ubuntu 24.04) |
-| **데이터 규모** | 74K+ 이벤트, 52명 유저 시뮬레이션 (5가지 페르소나) |
+| **현재 상태** | 실서비스 운영 중 (원스토어 판매중, 앱인토스 검수 대기) |
 
 <br>
 
@@ -50,7 +61,7 @@ flowchart TB
     end
 
     subgraph STORAGE["💾 ClickHouse (Star Schema)"]
-        FACT["game_events<br/>(MergeTree, 30 컬럼)"]
+        FACT["game_events<br/>(MergeTree, 31 컬럼)"]
         MV1["mv_daily_user_summary<br/>(SummingMergeTree)"]
         MV2["mv_stage_difficulty<br/>(AggregatingMergeTree)"]
         FS["fact_sessions"]
@@ -66,6 +77,12 @@ flowchart TB
     subgraph VIZ["📊 Grafana Dashboards"]
         D1["Pipeline Operations<br/>운영+품질"]
         D2["Game Analytics<br/>밸런싱·리텐션"]
+    end
+
+    subgraph BACKUP["📁 일일 백업"]
+        N8N["n8n 워크플로우<br/>매일 01:00 KST"]
+        GS["Google Sheets"]
+        ALERT["Slack + Gmail 알림"]
     end
 
     FE -- "v2 이벤트 (8종)" --> API
@@ -90,6 +107,9 @@ flowchart TB
     GA --> D1
     DIM --> D2
 
+    FACT --> N8N --> GS
+    N8N --> ALERT
+
     classDef client fill:#1a1a2e,stroke:#e94560,color:#fff
     classDef backend fill:#16213e,stroke:#0f3460,color:#fff
     classDef kafka fill:#1a1a2e,stroke:#f39c12,color:#fff
@@ -109,7 +129,7 @@ flowchart TB
   <img src="./docs/screenshots/dashboard-pipeline.png" alt="Pipeline Operations Dashboard" width="90%"/>
 </p>
 
-> DAU 추이, 이벤트 처리량, 이상 탐지 현황, Late Event 비율, 지연 분포, 필드 채움률을 통합 모니터링.
+> 핵심 지표(오늘), DAU 추이(7일), 이벤트 처리량, 이상 탐지 현황, Late Event 비율, 지연 분포, 필드 채움률을 통합 모니터링.
 
 ### Game Analytics — 밸런싱 · 리텐션 · TA 경쟁 분석
 <p align="center">
@@ -131,6 +151,7 @@ flowchart TB
 | **분석 DB** | ClickHouse | 컬럼 지향 OLAP, MergeTree 기반 실시간 집계 |
 | **CDC** | Debezium 2.5 | PostgreSQL WAL → Kafka, 유저/리더보드 실시간 동기화 |
 | **시각화** | Grafana | API 프로비저닝, 대시보드 2종 자동 배포 |
+| **일일 백업** | n8n → Google Sheets | 31개 컬럼 KST 변환 적재, 시트 자동 전환, Slack/Gmail 알림 |
 | **인프라** | Docker Compose · Caddy · Ubuntu 24.04 | 미니PC 홈서버 24/7 운영 |
 
 <br>
@@ -171,7 +192,7 @@ circuit-connect/
 
 ### 1. 이벤트 스키마 정형화 (Phase A)
 
-이벤트 13종 → 8종으로 통합, `schema_version: "2"` 적용.
+이벤트를 8종으로 통합하고, `schema_version: "2"` 적용.
 
 | 이벤트 | 설명 |
 |--------|------|
@@ -179,19 +200,21 @@ circuit-connect/
 | `stage_start` / `stage_clear` / `stage_fail` | 스테이지 플레이 결과 |
 | `item_use` | 만능블럭 구매/사용 |
 | `navigation` | 화면 이동 퍼널 |
-| `heartbeat` | 세션 활성 상태 확인 |
+| `time_attack_end` | 타임어택 세션 종료 |
 
-비정형 JSON payload → **30개 정형 컬럼**으로 추출하여 ClickHouse에서 바로 분석 쿼리 가능.
+비정형 JSON payload → **31개 정형 컬럼**으로 추출하여 ClickHouse에서 바로 분석 쿼리 가능.
+
+v1 → v2 전환 시 `tap_rotate` 이벤트를 제거했습니다. 셀 탭마다 로그가 찍혀 데이터 볼륨은 가장 많았지만, 분석적 가치가 낮았기 때문입니다. 탭 횟수는 `stage_clear`의 `taps` 필드 하나로 충분했습니다.
 
 ### 2. ClickHouse Star Schema (Phase B)
 
 ```
-┌─ Fact ────────────────────────────────────────┐
-│  game_events (MergeTree, 30 컬럼)             │
-│  → PARTITION BY toYYYYMM(event_date)          │
-│  → ORDER BY (event_type, user_key, timestamp) │
-│  → TTL 6 MONTH                                │
-└─────┬───────────────┬─────────────────────────┘
+┌─ Fact ─────────────────────────────────────────┐
+│  game_events (MergeTree, 31 컬럼)              │
+│  → PARTITION BY toYYYYMM(event_date)           │
+│  → ORDER BY (event_type, user_key, timestamp)  │
+│  → TTL 6 MONTH                                 │
+└─────┬───────────────┬──────────────────────────┘
       │               │
       ▼               ▼
 mv_daily_user_summary  mv_stage_difficulty
@@ -200,7 +223,7 @@ mv_daily_user_summary  mv_stage_difficulty
 
 설계 포인트:
 - **LowCardinality**: 카디널리티 낮은 필드(mode, event_type 등) → 딕셔너리 인코딩으로 압축률 극대화
-- **Sparse Column**: 모든 이벤트가 30개 컬럼을 채울 필요 없음 → DEFAULT 값으로 효율적 저장
+- **Sparse Column**: 모든 이벤트가 31개 컬럼을 채울 필요 없음 → DEFAULT 값으로 효율적 저장
 - **MV 자동 집계**: INSERT 시점에 일별 요약/스테이지 난이도가 자동 갱신
 
 ### 3. Flink 실시간 스트림 처리 (Phase C)
@@ -243,22 +266,33 @@ Python 스크립트로 **Grafana API 자동 프로비저닝** — 코드 기반 
 
 | 대시보드 | 목적 | 주요 패널 |
 |----------|------|-----------|
-| **Pipeline Operations** | 운영 현황 + 데이터 품질 | DAU 추이, 이벤트 처리량, 이상 탐지, Late Event 비율, 지연 분포, 필드 채움률 |
-| **Game Analytics** | 밸런싱 · 리텐션 · TA 경쟁 | 챕터별 클리어율 히트맵, 퍼널, D1/D3/D7 리텐션, TA 스코어보드 |
+| **Pipeline Operations** | 운영 현황 + 데이터 품질 | 핵심 지표(오늘), DAU 추이(7일), 이벤트 처리량, 이상 탐지, Late Event 비율, 지연 분포, 필드 채움률, Flink 세션 통계 |
+| **Game Analytics** | 밸런싱 · 리텐션 · TA 경쟁 | 오늘 현황(활성유저/이벤트/스토리/TA), 챕터별 클리어율, 퍼널, D1/D3/D7 리텐션, TA 스코어보드 |
 
-### 6. 시뮬레이션 데이터 (Phase E)
+각 패널에 **(오늘)**, **(최근 7일)**, **(전체)** 라벨을 표기하여 시간 범위를 명확하게 구분.
 
-5가지 유저 페르소나로 현실적인 행동 패턴을 시뮬레이션:
+### 6. n8n 일일 백업 워크플로우
 
-| 페르소나 | 인원 | 특징 |
-|---------|------|------|
-| 헤비유저 | 5명 | 매일 접속, Ch.5까지 진행, story+TA 병행 |
-| 일반유저 | 15명 | 주 3~4일, Ch.3까지 |
-| 캐주얼유저 | 15명 | 주 1~3일, Ch.2까지 |
-| 이탈유저 | 10명 | 가입 후 2~3일만 활동 |
-| 봇유저 | 3명 | clear_time < 300ms, 점수 오버플로 → 이상 탐지 대상 |
+매일 새벽 1시(KST) 자동 실행되는 Google Sheets 적재 + 알림 워크플로우.
 
-7일간 74K+ 이벤트를 Kafka에 직접 produce하여 전체 파이프라인 E2E 검증.
+```
+Schedule Trigger (01:00 KST)
+  → HTTP Request (ClickHouse 쿼리)
+  → Code (파싱 + 시트 선택)
+  → Google Sheets (Append)
+  → Code (알림 메시지)
+    ├→ Slack
+    └→ Gmail
+```
+
+- 31개 컬럼, `toTimeZone(timestamp, 'Asia/Seoul')` KST 변환 적용
+- Google Sheets 90만 행 도달 시 다음 시트로 자동 전환 (3개 시트 준비)
+- `$getWorkflowStaticData('global')`로 현재 시트 번호 및 누적 행 수 추적
+- Slack + Gmail 이중 알림으로 매일 적재 결과 확인
+
+### 7. 시뮬레이션 E2E 검증 (Phase E)
+
+실서비스 배포 전 파이프라인 전 구간을 검증하기 위해, 5가지 유저 페르소나(헤비/일반/캐주얼/이탈/봇)로 시뮬레이션 데이터를 생성하여 Kafka에 직접 produce했습니다. E2E 검증 완료 후 시뮬레이션 데이터는 정리했으며, 현재는 실제 유저 데이터로 운영 중입니다.
 
 <br>
 
@@ -275,7 +309,53 @@ Python 스크립트로 **Grafana API 자동 프로비저닝** — 코드 기반 
 | `cdc-grafana` | Grafana | 대시보드 2종 |
 | `my-postgres` | PostgreSQL 15 | 유저 · 리더보드 원본 |
 
+### 메모리 사용량 (16GB 미니 PC)
+
+| 컨테이너 | 메모리 |
+|----------|--------|
+| Kafka 브로커 ×3 | ~2.5GB |
+| ClickHouse | ~940MB |
+| Flink TaskManager | ~470MB |
+| Flink JobManager | ~440MB |
+| Kafka Connect | ~660MB |
+| n8n + worker | ~550MB |
+| FastAPI (게임 서버) | ~120MB |
+| PostgreSQL ×2 | ~140MB |
+| 기타 (Grafana, Zookeeper 등) | ~500MB |
+| **합계** | **~6.3GB** |
+
+16GB 중 40% 사용. OS와 기타 프로세스를 고려해도 24시간 안정 운영에 충분한 여유.
+
 Flink TaskManager 3 slot 중 2개는 기존 암호화폐 CDC Job이 사용하고, 1개를 Circuit Connect 전용으로 운영 — **한정된 리소스에서의 멀티 Job 공존 설계**.
+
+<br>
+
+## 🚀 배포
+
+### 원스토어 (판매중 ✅)
+- WebView 래퍼 앱 (패키지: `store.calmee.circuit`)
+- IARC 등급: **전체이용가 (3+)**
+- 등급분류번호: `ONIA-SG-260302-0008`
+- 아이콘 반려 → Adaptive Icon 규격 재제작 → 재제출 → 판매중
+
+### 앱인토스 (검수 대기 중 🔄)
+- 토스 SDK dynamic import (일반 브라우저 호환)
+- 앱인토스 기본 UI(닫기/공유 버튼)와의 겹침 → 상단 패딩 추가
+- 앱 정보 등록 완료, 게임 등급 정보 입력 대기
+
+### 배포 명령어
+
+```bash
+# 빌드
+cd ~/circuit-connect/frontend/circuit-connect/circuit-connect
+npm run build
+
+# 정적 파일 배포 (Caddy)
+sudo cp -r dist/web/* /srv/www/circuit/
+sudo systemctl reload caddy
+```
+
+빌드된 정적 파일을 Caddy가 서빙하는 디렉토리에 복사하면, `circuit.calmee.store`에서 접근 가능합니다. 원스토어 앱과 앱인토스 미니앱 모두 이 URL을 바라보기 때문에, 한 번의 배포로 모든 플랫폼에 반영됩니다.
 
 <br>
 
@@ -284,11 +364,13 @@ Flink TaskManager 3 slot 중 2개는 기존 암호화폐 CDC Job이 사용하고
 | 결정 | 이유 |
 |------|------|
 | **Kafka Consumer Group 분리** | ClickHouse(raw 저장)와 Flink(스트림 처리)가 같은 토픽을 독립적으로 소비 |
-| **RAPID_FIRE threshold 10→20** | 시뮬레이션 데이터의 burst 특성 (17초에 66K 이벤트)으로 false positive 발생 → 실환경 기준으로 조정 |
+| **RAPID_FIRE threshold 10→20** | 시뮬레이션 E2E 검증 시 burst 특성으로 false positive 발생 → 실환경 기준으로 조정 |
 | **seq 필드 도입 (전 레이어)** | 프론트→백엔드→Flink→ClickHouse 전 구간에서 이벤트 순서 보장 및 유실 감지 |
 | **봇 필터링 (쿼리 레벨)** | 봇 데이터를 삭제하지 않고 보존하되, 분석 쿼리에서 `user_key NOT LIKE 'user_bot%'`로 제외 — 이상 탐지 대시보드에서는 활용 |
 | **Grafana API 프로비저닝** | 수동 대시보드 관리 대신 Python 스크립트로 코드화 → 버전 관리, 재현 가능성 확보 |
 | **Star Schema + MV** | INSERT 시점에 자동 집계로 쿼리 시점 부하 감소, 미니PC 리소스 제약 대응 |
+| **v1→v2 스키마 전환** | JSON 중첩 파싱 비용 제거, tap_rotate 제거로 볼륨 절감, 31개 독립 컬럼으로 분석 효율 향상 |
+| **n8n 백업 시각 01:00 KST** | ClickHouse `yesterday()` 함수가 UTC 기준이므로, KST 자정 직후 실행 시 날짜 경계 문제 방지 |
 
 <br>
 
@@ -320,15 +402,7 @@ cd ~/circuit-connect/pipeline/flink
 # Flink Web UI에서 JAR 업로드 및 실행
 ```
 
-### 3. 시뮬레이션 데이터 생성
-
-```bash
-cd ~/circuit-connect/simulation
-python3 simulate_game_events.py          # 74K 이벤트 생성
-python3 provision_dashboards_v3.py       # Grafana 대시보드 배포
-```
-
-### 4. 프론트엔드 실행
+### 3. 프론트엔드 실행
 
 ```bash
 cd ~/circuit-connect/frontend/circuit-connect/circuit-connect
@@ -340,18 +414,36 @@ npm install && npm run dev
 ## 📈 개발 과정 (Phase별)
 
 ```
-Phase A  이벤트 스키마 정형화     13종→8종, schema_version "2", 30 컬럼
+Phase A  이벤트 스키마 정형화      v1→v2 전환, 8종 이벤트, 31 컬럼
    ↓
-Phase B  ClickHouse Star Schema   Fact + MV + CDC (Debezium → dim 테이블)
+Phase B  ClickHouse Star Schema    Fact + MV + CDC (Debezium → dim 테이블)
    ↓
-Phase C  Flink 실시간 처리        중복제거·지연감지·세션집계·이상탐지
+Phase C  Flink 실시간 처리         중복제거·지연감지·세션집계·이상탐지
    ↓
-Phase D  Grafana 대시보드          Pipeline Operations + Game Analytics
+Phase D  Grafana 대시보드           Pipeline Operations + Game Analytics
    ↓
-Phase E  시뮬레이션 데이터         5 페르소나, 74K 이벤트, 7일 E2E 검증
+Phase E  시뮬레이션 E2E 검증       5 페르소나로 파이프라인 전 구간 검증 → 정리 후 실서비스 전환
    ↓
-Phase F  대시보드 고도화 (v3)      TA 경쟁 스코어보드, 색상 체계, 레이아웃 최적화
+Phase F  대시보드 고도화            패널별 시간 필터, (오늘)/(7일)/(전체) 라벨, 오늘 현황 패널 추가
+   ↓
+배포     원스토어 출시 + 앱인토스   IARC 등급, AAB 빌드, 토스 SDK 연동, n8n 백업 워크플로우
 ```
+
+<br>
+
+## 📝 블로그 시리즈
+
+프로젝트 전 과정을 회고록으로 기록하고 있습니다.
+
+| 편 | 제목 | 내용 |
+|----|------|------|
+| 1편 | 계획 | 왜 이 프로젝트를 시작하는가, 게임 설계, 파이프라인 아키텍처 |
+| 2편 | 개발 | 게임 구현, 미니PC 인프라, Caddy+DNS, n8n 백업 |
+| 3편 | 파이프라인 완성 | Flink 도입 배경, 세션 집계, 이상 탐지, 중복 제거, 지연 감지 |
+| 4편 | 배포 직전 다듬기 | 스키마 v1→v2 전환, Grafana 더미 정리, n8n v2 재구축 |
+| 5편 | 배포 | 원스토어 출시, 앱인토스 등록, 토스 SDK 연동 |
+
+👉 [calme.tistory.com](https://calme.tistory.com)
 
 <br>
 
