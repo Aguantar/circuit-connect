@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 650" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 710" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
   <defs>
     <marker id="aG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#94a3b8"/></marker>
     <marker id="aB" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#60a5fa"/></marker>
@@ -8,7 +8,7 @@
   </defs>
 
   <!-- Background -->
-  <rect width="960" height="650" rx="12" fill="#0f172a"/>
+  <rect width="960" height="710" rx="12" fill="#0f172a"/>
 
   <!-- Title -->
   <text x="480" y="32" text-anchor="middle" fill="#f1f5f9" font-size="17" font-weight="700">⚡ Circuit Connect — Data Pipeline Architecture</text>
@@ -20,16 +20,16 @@
 
   <rect x="290" y="52" width="200" height="58" rx="8" fill="#1e293b" stroke="#8b5cf6" stroke-width="1.5"/>
   <text x="390" y="74" text-anchor="middle" fill="#a78bfa" font-size="11" font-weight="600">⚙️ FastAPI Backend</text>
-  <text x="390" y="92" text-anchor="middle" fill="#cbd5e1" font-size="9">aiokafka · v2 이벤트 정형화 (30컬럼)</text>
+  <text x="390" y="92" text-anchor="middle" fill="#cbd5e1" font-size="9">aiokafka · v2 이벤트 정형화 (31컬럼)</text>
 
   <rect x="570" y="52" width="200" height="58" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
   <text x="670" y="74" text-anchor="middle" fill="#f87171" font-size="11" font-weight="600">🔁 CDC Pipeline</text>
   <text x="670" y="92" text-anchor="middle" fill="#cbd5e1" font-size="9">PostgreSQL → Debezium 2.5 (WAL)</text>
 
   <rect x="810" y="52" width="120" height="58" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
-  <text x="870" y="70" text-anchor="middle" fill="#94a3b8" font-size="8" font-weight="600">Data Scale</text>
-  <text x="870" y="84" text-anchor="middle" fill="#e2e8f0" font-size="9" font-weight="700">74K+ events</text>
-  <text x="870" y="97" text-anchor="middle" fill="#cbd5e1" font-size="8">52 users · 5 personas</text>
+  <text x="870" y="70" text-anchor="middle" fill="#94a3b8" font-size="8" font-weight="600">Status</text>
+  <text x="870" y="84" text-anchor="middle" fill="#4ade80" font-size="9" font-weight="700">Live Service</text>
+  <text x="870" y="97" text-anchor="middle" fill="#cbd5e1" font-size="8">원스토어 판매중</text>
 
   <!-- Client → Backend -->
   <line x1="210" y1="81" x2="288" y2="81" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#aB)"/>
@@ -58,7 +58,7 @@
 
   <rect x="45" y="258" width="185" height="50" rx="5" fill="#1e293b" stroke="#047857" stroke-width="1"/>
   <text x="138" y="276" text-anchor="middle" fill="#34d399" font-size="8.5" font-weight="600">game_events (MergeTree)</text>
-  <text x="138" y="289" text-anchor="middle" fill="#94a3b8" font-size="7">30컬럼 · PARTITION BY toYYYYMM</text>
+  <text x="138" y="289" text-anchor="middle" fill="#94a3b8" font-size="7">31컬럼 · PARTITION BY toYYYYMM</text>
   <text x="138" y="301" text-anchor="middle" fill="#94a3b8" font-size="7">ORDER BY (event_type, user_key, ts)</text>
 
   <rect x="245" y="258" width="100" height="35" rx="5" fill="#1e293b" stroke="#047857" stroke-width="1"/>
@@ -116,8 +116,8 @@
   <path d="M730,296 L800,308" stroke="#22d3ee" stroke-width="1" marker-end="url(#aC)"/>
 
   <!-- Flink outputs → ClickHouse (fact_sessions, game_alerts) -->
-  <path d="M515,331 L460,280 L345,280" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#aC)"/>
-  <path d="M680,331 L462,275 L458,275" stroke="#22d3ee" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#aC)"/>
+  <path d="M515,331 C480,331 480,275 345,275" stroke="#22d3ee" stroke-width="1.2" stroke-dasharray="4,3" fill="none" marker-end="url(#aC)"/>
+  <path d="M680,331 C500,331 500,270 458,270" stroke="#22d3ee" stroke-width="1.2" stroke-dasharray="4,3" fill="none" marker-end="url(#aC)"/>
 
   <!-- ===== ROW 4: Grafana ===== -->
   <rect x="30" y="454" width="900" height="75" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
@@ -135,19 +135,28 @@
   <line x1="250" y1="426" x2="250" y2="452" stroke="#4ade80" stroke-width="1.5" marker-end="url(#aGr)"/>
   <line x1="715" y1="426" x2="715" y2="452" stroke="#4ade80" stroke-width="1.5" marker-end="url(#aGr)"/>
 
-  <!-- ===== LEGEND ===== -->
-  <rect x="30" y="555" width="900" height="48" rx="8" fill="#111827" stroke="#334155" stroke-width="1"/>
-  <text x="50" y="576" fill="#94a3b8" font-size="9" font-weight="600">Tech Stack</text>
-  <circle cx="120" cy="572" r="4" fill="#3b82f6"/><text x="129" y="576" fill="#cbd5e1" font-size="8">React/TS</text>
-  <circle cx="195" cy="572" r="4" fill="#8b5cf6"/><text x="204" y="576" fill="#cbd5e1" font-size="8">FastAPI</text>
-  <circle cx="265" cy="572" r="4" fill="#f59e0b"/><text x="274" y="576" fill="#cbd5e1" font-size="8">Kafka</text>
-  <circle cx="325" cy="572" r="4" fill="#06b6d4"/><text x="334" y="576" fill="#cbd5e1" font-size="8">Flink</text>
-  <circle cx="385" cy="572" r="4" fill="#10b981"/><text x="394" y="576" fill="#cbd5e1" font-size="8">ClickHouse</text>
-  <circle cx="475" cy="572" r="4" fill="#ef4444"/><text x="484" y="576" fill="#cbd5e1" font-size="8">Debezium</text>
-  <circle cx="555" cy="572" r="4" fill="#22c55e"/><text x="564" y="576" fill="#cbd5e1" font-size="8">Grafana</text>
-  <text x="660" y="576" fill="#64748b" font-size="7">|</text>
-  <text x="680" y="576" fill="#94a3b8" font-size="8" font-weight="600">Infra</text>
-  <text x="715" y="576" fill="#cbd5e1" font-size="8">Mini PC (Intel N100, 16GB) · Docker · Caddy · Ubuntu 24.04 · 24/7</text>
+  <!-- ===== ROW 5: n8n Daily Backup ===== -->
+  <rect x="30" y="540" width="900" height="50" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="480" y="562" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="600">📁 n8n 일일 백업 — 매일 01:00 KST 자동 실행</text>
+  <text x="480" y="578" text-anchor="middle" fill="#94a3b8" font-size="8">ClickHouse → Google Sheets (31컬럼, KST 변환, 시트 자동 전환) → Slack + Gmail 알림</text>
 
-  <text x="480" y="595" text-anchor="middle" fill="#334155" font-size="7">© 이준서 — Data Engineering Portfolio</text>
+  <!-- ClickHouse → n8n -->
+  <line x1="480" y1="529" x2="480" y2="538" stroke="#c084fc" stroke-width="1.5" marker-end="url(#aG)"/>
+
+  <!-- ===== LEGEND ===== -->
+  <rect x="30" y="615" width="900" height="48" rx="8" fill="#111827" stroke="#334155" stroke-width="1"/>
+  <text x="50" y="636" fill="#94a3b8" font-size="9" font-weight="600">Tech Stack</text>
+  <circle cx="120" cy="632" r="4" fill="#3b82f6"/><text x="129" y="636" fill="#cbd5e1" font-size="8">React/TS</text>
+  <circle cx="195" cy="632" r="4" fill="#8b5cf6"/><text x="204" y="636" fill="#cbd5e1" font-size="8">FastAPI</text>
+  <circle cx="265" cy="632" r="4" fill="#f59e0b"/><text x="274" y="636" fill="#cbd5e1" font-size="8">Kafka</text>
+  <circle cx="325" cy="632" r="4" fill="#06b6d4"/><text x="334" y="636" fill="#cbd5e1" font-size="8">Flink</text>
+  <circle cx="385" cy="632" r="4" fill="#10b981"/><text x="394" y="636" fill="#cbd5e1" font-size="8">ClickHouse</text>
+  <circle cx="475" cy="632" r="4" fill="#ef4444"/><text x="484" y="636" fill="#cbd5e1" font-size="8">Debezium</text>
+  <circle cx="555" cy="632" r="4" fill="#22c55e"/><text x="564" y="636" fill="#cbd5e1" font-size="8">Grafana</text>
+  <circle cx="620" cy="632" r="4" fill="#a855f7"/><text x="629" y="636" fill="#cbd5e1" font-size="8">n8n</text>
+  <text x="670" y="636" fill="#64748b" font-size="7">|</text>
+  <text x="690" y="636" fill="#94a3b8" font-size="8" font-weight="600">Infra</text>
+  <text x="725" y="636" fill="#cbd5e1" font-size="8">Mini PC (Intel N100, 16GB) · Docker · Caddy · Ubuntu 24.04 · 24/7</text>
+
+  <text x="480" y="680" text-anchor="middle" fill="#334155" font-size="7">© 이준서 — Data Engineering Portfolio</text>
 </svg>

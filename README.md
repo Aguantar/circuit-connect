@@ -206,6 +206,8 @@ circuit-connect/
 
 v1 → v2 전환 시 `tap_rotate` 이벤트를 제거했습니다. 셀 탭마다 로그가 찍혀 데이터 볼륨은 가장 많았지만, 분석적 가치가 낮았기 때문입니다. 탭 횟수는 `stage_clear`의 `taps` 필드 하나로 충분했습니다.
 
+> 📄 전체 31개 컬럼 명세: [docs/event-schema-v2.md](./docs/event-schema-v2.md)
+
 ### 2. ClickHouse Star Schema (Phase B)
 
 ```
