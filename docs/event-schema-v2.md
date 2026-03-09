@@ -44,8 +44,8 @@
 
 | # | 컬럼명 | 타입 | 설명 |
 |---|--------|------|------|
-| 24 | `action` | LowCardinality(String) | 아이템 행동. `buy` (구매) 또는 `use` (사용) |
-| 25 | `item_type` | LowCardinality(String) | 아이템 종류. `universal` (만능블럭) |
+| 24 | `action` | LowCardinality(String) | 아이템 행동. `purchase` (구매) 또는 `use` (사용) |
+| 25 | `item_type` | LowCardinality(String) | 아이템 종류. `universal_block` (만능블럭) |
 | 26 | `reason` | LowCardinality(String) | 행동 사유 또는 부가 정보 |
 | 27 | `cost` | UInt16 | 아이템 구매 비용 (포인트). 만능블럭: 200 |
 | 28 | `remaining` | UInt8 | 아이템 사용/구매 후 잔여 개수 |
@@ -54,7 +54,7 @@
 
 | # | 컬럼명 | 타입 | 설명 |
 |---|--------|------|------|
-| 29 | `from_screen` | LowCardinality(String) | 출발 화면. `title`, `stage_select`, `game`, `leaderboard` 등 |
+| 29 | `from_screen` | LowCardinality(String) | 출발 화면. `title`, `stageSelect`, `game`, `leaderboard`, `timeAttackSelect`, `timeAttack`, `timeAttackResult` |
 | 30 | `to_screen` | LowCardinality(String) | 도착 화면 |
 
 ## 확장 필드
