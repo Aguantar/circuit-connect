@@ -12,7 +12,7 @@
 | **🎮 게임 플레이** | [circuit.calmee.store](https://circuit.calmee.store) |
 | **📊 파이프라인 대시보드** | [grafana.calmee.store](https://grafana.calmee.store) |
 | **📱 원스토어** | 검색: "Circuit Connect" (전체이용가, 판매중) |
-| **📱 앱인토스** | 검수 대기 중 |
+| **📱 앱인토스** | 등록완료 / 게임 -> 신규 탭 '불을 켜줘' |
 
 <br>
 
