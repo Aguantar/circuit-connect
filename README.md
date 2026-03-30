@@ -12,7 +12,7 @@
 | **🎮 게임 플레이** | [circuit.calmee.store](https://circuit.calmee.store) |
 | **📊 파이프라인 대시보드** | [grafana.calmee.store](https://grafana.calmee.store) |
 | **📱 원스토어** | 검색: "Circuit Connect" (전체이용가, 판매중) |
-| **📱 앱인토스** | 등록완료 / 게임 -> 신규 탭 '불을 켜줘' |
+| **📱 앱인토스** | 출시 완료 / 게임 → 신규 탭 "불을 켜줘" |
 
 <br>
 
@@ -24,7 +24,7 @@
 | **게임** | 전선을 연결해 전구에 불을 켜는 논리 퍼즐 (스토리 5챕터 × 10스테이지 + 타임어택) |
 | **핵심 스택** | React · FastAPI · Kafka · Flink · ClickHouse · Grafana |
 | **인프라** | 미니PC 홈서버 24/7 운영 (Intel N100, 16GB RAM, Ubuntu 24.04) |
-| **현재 상태** | 실서비스 운영 중 (원스토어 판매중, 앱인토스 검수 대기) |
+| **현재 상태** | 실서비스 운영 중 (원스토어 판매중, 앱인토스 출시 완료) |
 
 <br>
 
@@ -85,7 +85,7 @@ flowchart TB
         ALERT["Slack + Gmail 알림"]
     end
 
-    FE -- "v2 이벤트 (8종)" --> API
+    FE -- "v2 이벤트 (10종)" --> API
     API -- "aiokafka produce" --> GE_TOPIC
 
     GE_TOPIC -- "group: clickhouse-*" --> FACT
@@ -192,7 +192,7 @@ circuit-connect/
 
 ### 1. 이벤트 스키마 정형화 (Phase A)
 
-이벤트를 8종으로 통합하고, `schema_version: "2"` 적용.
+이벤트를 10종으로 통합하고, `schema_version: "2"` 적용.
 
 | 이벤트 | 설명 |
 |--------|------|
@@ -340,7 +340,7 @@ Flink TaskManager 3 slot 중 2개는 기존 암호화폐 CDC Job이 사용하고
 - 등급분류번호: `ONIA-SG-260302-0008`
 - 아이콘 반려 → Adaptive Icon 규격 재제작 → 재제출 → 판매중
 
-### 앱인토스 (검수 대기 중 🔄)
+### 앱인토스 (출시 완료 ✅)
 - 토스 SDK dynamic import (일반 브라우저 호환)
 - 앱인토스 기본 UI(닫기/공유 버튼)와의 겹침 → 상단 패딩 추가
 - 앱 정보 등록 완료, 게임 등급 정보 입력 대기
@@ -416,7 +416,7 @@ npm install && npm run dev
 ## 📈 개발 과정 (Phase별)
 
 ```
-Phase A  이벤트 스키마 정형화      v1→v2 전환, 8종 이벤트, 31 컬럼
+Phase A  이벤트 스키마 정형화      v1→v2 전환, 10종 이벤트, 31 컬럼
    ↓
 Phase B  ClickHouse Star Schema    Fact + MV + CDC (Debezium → dim 테이블)
    ↓
