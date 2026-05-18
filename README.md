@@ -1,7 +1,7 @@
 # ⚡ Circuit Connect — "불을 켜줘!"
 
 > **실시간 데이터 파이프라인이 내장된 퍼즐 게임**  
-> 토스 앱인토스 미니앱 + 데이터 엔지니어링 포트폴리오
+> 토스 앱인토스 미니앱 + Analytics Engineering 포트폴리오
 
 <br>
 
@@ -25,6 +25,7 @@
 | **핵심 스택** | React · FastAPI · Kafka · Flink · ClickHouse · Grafana |
 | **인프라** | 미니PC 홈서버 24/7 운영 (Intel N100, 16GB RAM, Ubuntu 24.04) |
 | **현재 상태** | 실서비스 운영 중 (원스토어 판매중, 앱인토스 출시 완료) |
+| **운영 지표** | 유저 **350명** · 누적 이벤트 **15,000+건** |
 
 <br>
 
@@ -455,4 +456,4 @@ This project is for portfolio and educational purposes.
 
 ---
 
-*Built by 이준서 — 데이터 엔지니어링 포트폴리오 프로젝트*
+*Built by 이준서 — Analytics Engineering 포트폴리오 프로젝트*
